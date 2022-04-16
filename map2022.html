@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>
+      Intro to MapView - Create a 2D map | Sample | ArcGIS API for JavaScript
+      4.23
+    </title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      body{
+          position:relative;
+      }
+      
+       .yeMei{
+        box-sizing: border-box;
+        height: 70px;
+        width: 100%;
+        background-color:rgb(255,192,203 ,0.8);
+        font-size: 60px;
+        color: white;
+        padding-left: 50px;
+      }
+      #basemapGalleryDiv {
+        position: absolute;
+        top:70px;
+        left: 85%;
+        height: 100%;
+        width: 200px;
+        z-index: 1;
+      }
+      #other{
+        position: absolute;
+        z-index: 1;
+        left:62% ;
+        top: 70%;
+      }
+      #final{
+        height: 350px;
+        position: absolute;
+        z-index: 1;
+        left: 67%;
+        top: 70px;
+      }
+      
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.23/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.23/"></script>
+
+    <script>
+      require([
+        "esri/Map", 
+        "esri/views/MapView", 
+        "esri/layers/FeatureLayer",
+        "esri/widgets/Legend",
+        "esri/widgets/ScaleBar",
+        "esri/widgets/Search",
+          "esri/widgets/LayerList",
+          "esri/widgets/Measurement",
+          "esri/widgets/Compass"
+        ], (
+          Map, 
+          MapView,
+          FeatureLayer,
+          Legend,
+          ScaleBar,
+          Search,
+          LayerList,
+          Measurement,
+          Compass
+          ) => {
+        const flayer = new FeatureLayer({url:"https://services2.arcgis.com/No7KRrFgpO516cMP/arcgis/rest/services/Incidents/FeatureServer"});
+        
+        const map = new Map({
+          basemap: "topo-vector"
+        });
+        map.layers.add(flayer);
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 2,
+          center: [110, 30] // longitude, latitude
+        });
+        
+        const legend = new Legend({
+        view: view,
+        layerInfos: [{
+                  layer: flayer,
+                  title: "世界事件类型"
+              }]
+        });
+        view.ui.add(legend, "bottom-right");
+
+       const scaleBar = new ScaleBar({
+       view: view,
+       style:"ruler",
+       unit:"metric"
+       });
+       // Add widget to the bottom left corner of the view
+       view.ui.add(scaleBar, {
+       position: "bottom-left"
+       });
+       
+       const searchWidget = new Search({
+            view: view
+        });
+        view.ui.add(searchWidget, {
+            position: "top-right",
+            index: 2
+        });
+
+        const layerList = new LayerList({
+            view: view
+        });
+        view.ui.add(layerList, {
+            position: "top-right"
+        });
+       
+       const measurement = new Measurement({
+       view: view,
+       activeTool: "distance"
+       });
+       view.ui.add(measurement, "top-left");
+       
+       // Switch between area and distance measurement
+       function switchTool() {
+        const tool = measurement.activeTool === "distance" ? "area" : "distance";
+       measurement.activeTool = tool;
+       }
+       
+       let compass = new Compass({
+  view: view
+});
+
+// adds the compass to the top left corner of the MapView
+view.ui.add(compass, "bottom-left");
+       
+      });
+    </script>
+  </head>
+  <body>
+   <div id="basemapGalleryDiv"></div>
+    <div class="yeMei">世界事件图</div>
+    <div id="viewDiv"></div>
+    <div id="other"></div>
+    <div id="final"></div>
+  </body>
+</html>
